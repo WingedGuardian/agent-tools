@@ -32,6 +32,8 @@ async def qr_generate(data: str, size: int = 256) -> str:
 
     from .endpoints.qr import QRFormat, _render_qr
 
+    if len(data) > 4000:
+        return "Error: data exceeds 4000 character limit"
     size = max(64, min(2048, size))
     img_bytes = _render_qr(data, size, QRFormat.png)
     b64 = base64.b64encode(img_bytes).decode()
