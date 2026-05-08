@@ -2,10 +2,21 @@
 
 from __future__ import annotations
 
+import contextlib
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .endpoints import dns, qr
+from .mcp_server import mcp
+
+
+@contextlib.asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Manage MCP session lifecycle."""
+    async with mcp.session_manager.run():
+        yield
+
 
 app = FastAPI(
     title="Agent Tools",
@@ -17,6 +28,7 @@ app = FastAPI(
     ),
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
 # CORS — allow all origins for agent access
@@ -30,6 +42,9 @@ app.add_middleware(
 # Mount endpoint routers
 app.include_router(qr.router)
 app.include_router(dns.router)
+
+# Mount MCP server at /mcp (streamable-http transport)
+app.mount("/mcp", mcp.streamable_http_app())
 
 
 @app.get("/health")
