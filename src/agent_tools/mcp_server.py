@@ -74,3 +74,36 @@ async def email_validate(email: str, check_smtp: bool = False) -> dict:
 
     result = await _validate_email_endpoint(email=email, check_smtp=check_smtp)
     return result.model_dump()
+
+
+@mcp.tool()
+async def ip_lookup(ip: str, geo: bool = True) -> dict:
+    """Look up an IP address.
+
+    Returns geolocation, ISP, proxy/hosting detection, and reverse DNS.
+
+    Args:
+        ip: IPv4 or IPv6 address to look up.
+        geo: Include geolocation data (country, city, lat/lon). Default true.
+    """
+    from .endpoints.ip import ip_lookup as _ip_lookup_endpoint
+
+    result = await _ip_lookup_endpoint(ip=ip, geo=geo)
+    return result.model_dump()
+
+
+@mcp.tool()
+async def url_health(url: str, follow_redirects: bool = True) -> dict:
+    """Check if a URL is alive and healthy.
+
+    Returns status code, redirect chain, SSL certificate info,
+    response time, and server details.
+
+    Args:
+        url: The URL to check (e.g. "https://example.com").
+        follow_redirects: Whether to follow redirects. Default true.
+    """
+    from .endpoints.url import url_health as _url_health_endpoint
+
+    result = await _url_health_endpoint(url=url, follow_redirects=follow_redirects)
+    return result.model_dump()

@@ -75,6 +75,14 @@ def build_route_configs() -> dict[str, RouteConfig]:
             accepts=make_payment_option("$0.005"),
             description="Email validation",
         ),
+        "GET /v1/ip/lookup": RouteConfig(
+            accepts=make_payment_option("$0.005"),
+            description="IP geolocation and reputation",
+        ),
+        "GET /v1/url/health": RouteConfig(
+            accepts=make_payment_option("$0.003"),
+            description="URL health check",
+        ),
     }
 
 
