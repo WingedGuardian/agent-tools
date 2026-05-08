@@ -8,7 +8,7 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .endpoints import dns, email, headers, ip, qr, url, whois
+from .endpoints import dns, email, extract, headers, ip, qr, techdetect, url, whois
 from .mcp_server import mcp
 from .payments import create_x402_middleware_args
 
@@ -61,6 +61,8 @@ app.include_router(ip.router)
 app.include_router(url.router)
 app.include_router(whois.router)
 app.include_router(headers.router)
+app.include_router(extract.router)
+app.include_router(techdetect.router)
 
 # Mount MCP server at /mcp (streamable-http transport)
 app.mount("/mcp", mcp.streamable_http_app())
@@ -124,6 +126,18 @@ async def root() -> dict:
                 "method": "GET",
                 "description": "HTTP security headers analysis with score",
                 "price": "$0.003",
+            },
+            {
+                "path": "/v1/extract/text",
+                "method": "GET",
+                "description": "Extract clean text from webpage — strips HTML, nav, ads",
+                "price": "$0.005",
+            },
+            {
+                "path": "/v1/tech/detect",
+                "method": "GET",
+                "description": "Detect website technology stack — CMS, framework, CDN, analytics",
+                "price": "$0.005",
             },
         ],
         "payment": {

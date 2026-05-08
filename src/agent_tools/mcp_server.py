@@ -139,3 +139,38 @@ async def headers_analyze(url: str) -> dict:
 
     result = await _headers_endpoint(url=url)
     return result.model_dump()
+
+
+@mcp.tool()
+async def extract_text(url: str, max_length: int = 5000) -> dict:
+    """Extract clean readable text from a webpage.
+
+    Strips HTML, navigation, ads, scripts, and boilerplate.
+    Returns clean text, title, description, word count, and language.
+
+    Args:
+        url: The URL to extract text from.
+        max_length: Max characters to return (100-50000). Default 5000.
+    """
+    from .endpoints.extract import extract_text as _extract_endpoint
+
+    max_length = max(100, min(50000, max_length))
+    result = await _extract_endpoint(url=url, max_length=max_length)
+    return result.model_dump()
+
+
+@mcp.tool()
+async def tech_detect(url: str) -> dict:
+    """Detect the technology stack of a website.
+
+    Analyzes HTTP headers, HTML, and script sources to identify
+    frameworks (React, Vue, Next.js), CMS (WordPress, Shopify),
+    CDN (Cloudflare, Fastly), analytics, and more.
+
+    Args:
+        url: The URL to analyze (e.g. "https://example.com").
+    """
+    from .endpoints.techdetect import detect_tech as _tech_endpoint
+
+    result = await _tech_endpoint(url=url)
+    return result.model_dump()

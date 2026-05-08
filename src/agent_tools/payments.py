@@ -91,6 +91,14 @@ def build_route_configs() -> dict[str, RouteConfig]:
             accepts=make_payment_option("$0.003"),
             description="HTTP headers security analysis",
         ),
+        "GET /v1/extract/text": RouteConfig(
+            accepts=make_payment_option("$0.005"),
+            description="Text extraction from URL",
+        ),
+        "GET /v1/tech/detect": RouteConfig(
+            accepts=make_payment_option("$0.005"),
+            description="Technology stack detection",
+        ),
     }
 
 
