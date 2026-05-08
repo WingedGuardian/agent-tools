@@ -83,6 +83,14 @@ def build_route_configs() -> dict[str, RouteConfig]:
             accepts=make_payment_option("$0.003"),
             description="URL health check",
         ),
+        "GET /v1/whois/lookup": RouteConfig(
+            accepts=make_payment_option("$0.005"),
+            description="WHOIS domain lookup",
+        ),
+        "GET /v1/headers/analyze": RouteConfig(
+            accepts=make_payment_option("$0.003"),
+            description="HTTP headers security analysis",
+        ),
     }
 
 

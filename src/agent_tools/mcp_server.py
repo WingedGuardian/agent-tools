@@ -107,3 +107,35 @@ async def url_health(url: str, follow_redirects: bool = True) -> dict:
 
     result = await _url_health_endpoint(url=url, follow_redirects=follow_redirects)
     return result.model_dump()
+
+
+@mcp.tool()
+async def whois_lookup(domain: str) -> dict:
+    """WHOIS lookup for a domain.
+
+    Returns registrar, creation/expiration dates, nameservers,
+    domain status codes, and registrant info when available.
+
+    Args:
+        domain: The domain name to look up (e.g. "example.com").
+    """
+    from .endpoints.whois import whois_lookup as _whois_endpoint
+
+    result = await _whois_endpoint(domain=domain)
+    return result.model_dump()
+
+
+@mcp.tool()
+async def headers_analyze(url: str) -> dict:
+    """Analyze HTTP response headers for a URL.
+
+    Returns all response headers plus a security header audit
+    with a 0-100 score checking HSTS, CSP, X-Frame-Options, etc.
+
+    Args:
+        url: The URL to analyze (e.g. "https://example.com").
+    """
+    from .endpoints.headers import analyze_headers as _headers_endpoint
+
+    result = await _headers_endpoint(url=url)
+    return result.model_dump()
