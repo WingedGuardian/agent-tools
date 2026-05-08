@@ -57,3 +57,20 @@ async def dns_health(domain: str, include_txt: bool = False) -> dict:
 
     result = await _dns_health_endpoint(domain=domain, include_txt=include_txt)
     return result.model_dump()
+
+
+@mcp.tool()
+async def email_validate(email: str, check_smtp: bool = False) -> dict:
+    """Validate an email address.
+
+    Checks format, MX records, disposable domain, role account,
+    and optionally probes SMTP to verify the mailbox exists.
+
+    Args:
+        email: The email address to validate.
+        check_smtp: Whether to probe the SMTP server (slower, 2-5s). Default false.
+    """
+    from .endpoints.email import validate_email as _validate_email_endpoint
+
+    result = await _validate_email_endpoint(email=email, check_smtp=check_smtp)
+    return result.model_dump()

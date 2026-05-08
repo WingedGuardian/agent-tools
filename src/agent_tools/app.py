@@ -8,7 +8,7 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .endpoints import dns, qr
+from .endpoints import dns, email, qr
 from .mcp_server import mcp
 from .payments import create_x402_middleware_args
 
@@ -56,6 +56,7 @@ else:
 # Mount endpoint routers
 app.include_router(qr.router)
 app.include_router(dns.router)
+app.include_router(email.router)
 
 # Mount MCP server at /mcp (streamable-http transport)
 app.mount("/mcp", mcp.streamable_http_app())
@@ -89,6 +90,12 @@ async def root() -> dict:
                 "method": "GET",
                 "description": "DNS health check — records, mail security, resolution",
                 "price": "$0.003",
+            },
+            {
+                "path": "/v1/email/validate",
+                "method": "GET",
+                "description": "Email validation — format, MX, disposable, SMTP probe",
+                "price": "$0.005",
             },
         ],
         "payment": {
