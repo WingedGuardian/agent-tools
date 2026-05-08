@@ -49,8 +49,6 @@ async def dns_health(domain: str, include_txt: bool = False) -> dict:
         domain: The domain name to check (e.g. "example.com").
         include_txt: Whether to include all TXT records. Default false.
     """
-    import dns.asyncresolver
-    import dns.resolver
 
     # Reuse the endpoint logic directly
     from .endpoints.dns import dns_health as _dns_health_endpoint

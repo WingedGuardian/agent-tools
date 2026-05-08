@@ -3,12 +3,16 @@
 from __future__ import annotations
 
 import contextlib
+import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .endpoints import dns, qr
 from .mcp_server import mcp
+from .payments import create_x402_middleware_args
+
+logger = logging.getLogger(__name__)
 
 
 @contextlib.asynccontextmanager
@@ -38,6 +42,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# x402 payment middleware — enabled when AGENT_TOOLS_PAY_TO is set
+x402_args = create_x402_middleware_args()
+if x402_args:
+    from x402.http.middleware.fastapi import PaymentMiddlewareASGI
+
+    app.add_middleware(PaymentMiddlewareASGI, **x402_args)
+    logger.info("x402 payments enabled (testnet=%s)", x402_args["paywall_config"].testnet)
+else:
+    logger.info("x402 payments disabled — set AGENT_TOOLS_PAY_TO to enable")
 
 # Mount endpoint routers
 app.include_router(qr.router)

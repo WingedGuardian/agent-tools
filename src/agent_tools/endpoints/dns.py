@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import asyncio
 from typing import Any
 
 from fastapi import APIRouter, Query
@@ -115,7 +114,7 @@ async def dns_health(
 
         result["mail_security"] = MailSecurity(**mail_sec)
 
-    except asyncio.TimeoutError:
+    except TimeoutError:
         result["error"] = "DNS resolution timed out"
     except Exception as e:
         result["error"] = str(e)

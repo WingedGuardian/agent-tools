@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import io
-from enum import Enum
+from enum import StrEnum
 
 from fastapi import APIRouter, Query
 from fastapi.responses import Response
@@ -12,7 +12,7 @@ from pydantic import BaseModel
 router = APIRouter(prefix="/v1/qr", tags=["qr"])
 
 
-class QRFormat(str, Enum):
+class QRFormat(StrEnum):
     png = "png"
     svg = "svg"
 
