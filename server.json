@@ -1,6 +1,6 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.wingedguardian/agent-tools",
+  "name": "io.github.WingedGuardian/agent-tools",
   "title": "Agent Tools",
   "description": "9 utility tools for agents: DNS, WHOIS, email, IP, URL, headers, QR, text, tech. x402 on Base.",
   "websiteUrl": "https://tools.beethoven2024.com",
