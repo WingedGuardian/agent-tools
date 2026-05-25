@@ -74,6 +74,45 @@ async def health() -> dict:
     return {"status": "ok", "version": "0.1.0"}
 
 
+@app.get("/.well-known/mcp/server-card.json")
+async def mcp_server_card() -> dict:
+    """Static MCP server metadata — used by Smithery and other registries for discovery."""
+    return {
+        "schema_version": "2025-03-26",
+        "name": "agent-tools",
+        "title": "Agent Tools",
+        "description": (
+            "Agent-native utility API bundle — 9 tools for DNS, WHOIS, email validation, "
+            "IP geolocation, URL health, HTTP headers analysis, QR codes, text extraction, "
+            "and tech stack detection. x402 micropayments + streamable-http MCP transport."
+        ),
+        "version": "0.1.0",
+        "endpoint": "https://tools.beethoven2024.com/mcp",
+        "transport": "streamable-http",
+        "auth": {
+            "type": "x402",
+            "network": "base-sepolia",
+            "description": (
+                "Per-call USDC micropayments via x402 protocol. Free endpoints: "
+                "/health, /, /docs, /mcp handshake."
+            ),
+        },
+        "tools": [
+            "qr_generate", "dns_health", "email_validate", "ip_lookup",
+            "url_health", "whois_lookup", "headers_analyze", "extract_text",
+            "tech_detect",
+        ],
+        "homepage": "https://github.com/WingedGuardian/agent-tools",
+        "license": "MIT",
+        "keywords": [
+            "x402", "micropayments", "USDC", "Base", "MCP", "Model Context Protocol",
+            "DNS", "WHOIS", "email validation", "IP geolocation", "URL health",
+            "HTTP headers", "QR code", "text extraction", "tech detection",
+            "agent-native", "agentic",
+        ],
+    }
+
+
 @app.get("/")
 async def root() -> dict:
     """Service discovery root — machine-readable capabilities."""
