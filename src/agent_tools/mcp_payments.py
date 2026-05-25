@@ -183,7 +183,7 @@ class MCPPaymentMiddleware:
 
         if not payment_header:
             # Return 402 Payment Required
-            payment_required = self._server.create_payment_required_response(requirements)
+            payment_required = await self._server.create_payment_required_response(requirements)
             pr_json = json.loads(
                 payment_required.model_dump_json(by_alias=True, exclude_none=True)
             )

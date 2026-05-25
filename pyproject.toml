@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-x402 = ["x402[fastapi,evm]>=2.9"]
+x402 = ["x402[fastapi,evm]>=2.11"]
 mcp = ["mcp>=1.25,<2"]
 all = ["agent-tools[x402,mcp]"]
 dev = ["ruff>=0.8", "pytest>=8.0", "pytest-asyncio>=0.24"]

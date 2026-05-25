@@ -34,7 +34,7 @@ def _mock_server():
     server.build_payment_requirements.return_value = [MagicMock()]
     pr = MagicMock()
     pr.model_dump_json.return_value = '{"x402Version":2,"accepts":[]}'
-    server.create_payment_required_response.return_value = pr
+    server.create_payment_required_response = AsyncMock(return_value=pr)
     matching = MagicMock()
     server.find_matching_requirements.return_value = matching
     verify = MagicMock()
