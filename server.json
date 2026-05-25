@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.wingedguardian/agent-tools",
+  "title": "Agent Tools",
+  "description": "9 agent-native utility tools — DNS health, WHOIS lookup, email validation, IP geolocation, URL health, HTTP headers analysis, QR code generation, text extraction, and tech stack detection. REST API + MCP server (streamable-http) with x402 micropayments on Base mainnet.",
+  "websiteUrl": "https://tools.beethoven2024.com",
+  "repository": {
+    "url": "https://github.com/WingedGuardian/agent-tools",
+    "source": "github"
+  },
+  "version": "0.1.0",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://tools.beethoven2024.com/mcp"
+    }
+  ]
+}
