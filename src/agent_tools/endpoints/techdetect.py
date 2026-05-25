@@ -12,6 +12,8 @@ import re
 from fastapi import APIRouter, Query
 from pydantic import BaseModel
 
+from ..safety import validate_url_safe
+
 router = APIRouter(prefix="/v1/tech", tags=["tech"])
 
 
@@ -95,9 +97,8 @@ async def detect_tech(
 
     result: dict = {"url": url}
 
-    if not url.startswith(("http://", "https://")):
-        url = f"https://{url}"
-        result["url"] = url
+    url = await validate_url_safe(url)
+    result["url"] = url
 
     try:
         async with httpx.AsyncClient(
