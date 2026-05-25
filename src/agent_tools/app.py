@@ -91,10 +91,11 @@ async def mcp_server_card() -> dict:
         "transport": "streamable-http",
         "auth": {
             "type": "x402",
-            "network": "base-sepolia",
+            "network": "base",
+            "facilitator": "https://facilitator.xpay.sh",
             "description": (
-                "Per-call USDC micropayments via x402 protocol. Free endpoints: "
-                "/health, /, /docs, /mcp handshake."
+                "Per-call USDC micropayments via x402 protocol on Base mainnet. "
+                "Free endpoints: /health, /, /docs, /mcp handshake."
             ),
         },
         "tools": [
