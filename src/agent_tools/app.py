@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .endpoints import dns, email, extract, headers, ip, qr, techdetect, url, whois
 from .limits import IPRateLimitMiddleware
+from .mcp_payments import MCPPaymentMiddleware
 from .mcp_server import mcp
 from .payments import create_x402_middleware_args
 
@@ -56,6 +57,14 @@ if x402_args:
     from x402.http.middleware.fastapi import PaymentMiddlewareASGI
 
     app.add_middleware(PaymentMiddlewareASGI, **x402_args)
+    # MCP payment gate — added after PaymentMiddlewareASGI so it wraps the outer layer.
+    # Request flow: MCPPaymentMiddleware → PaymentMiddlewareASGI → CORSMiddleware → routes.
+    # tools/call on /mcp is gated here; /v1/* routes are gated by PaymentMiddlewareASGI.
+    app.add_middleware(
+        MCPPaymentMiddleware,
+        server=x402_args["server"],
+        testnet=x402_args["paywall_config"].testnet,
+    )
     logger.info("x402 payments enabled (testnet=%s)", x402_args["paywall_config"].testnet)
 else:
     logger.info("x402 payments disabled — set AGENT_TOOLS_PAY_TO to enable")
