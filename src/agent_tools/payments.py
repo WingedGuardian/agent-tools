@@ -1,8 +1,12 @@
 """x402 payment configuration.
 
 Configures the x402 middleware for USDC micropayments on Base.
-Uses the public facilitator at x402.org for payment verification
-and settlement — no blockchain code needed on our side.
+Uses xpay's facilitator (https://facilitator.xpay.sh) for mainnet,
+x402.org for testnet. No blockchain code needed on our side.
+
+Facilitator URL is selected automatically based on AGENT_TOOLS_TESTNET:
+- testnet=true  → https://x402.org/facilitator (Base Sepolia only)
+- testnet=false → https://facilitator.xpay.sh (Base mainnet, zero fees)
 """
 
 from __future__ import annotations
@@ -112,9 +116,14 @@ def create_x402_middleware_args() -> dict | None:
     if not pay_to:
         return None
 
-    facilitator = HTTPFacilitatorClient(
-        FacilitatorConfig(url="https://x402.org/facilitator")
+    # Select facilitator based on network. xpay supports mainnet with zero fees
+    # and no auth; x402.org is testnet-only.
+    facilitator_url = (
+        "https://x402.org/facilitator"
+        if is_testnet()
+        else "https://facilitator.xpay.sh"
     )
+    facilitator = HTTPFacilitatorClient(FacilitatorConfig(url=facilitator_url))
     server = x402ResourceServer(facilitator)
 
     # Register the EVM "exact" payment scheme for the target network
