@@ -59,6 +59,21 @@ async def test_blocks_private_172_range():
 
 
 @pytest.mark.asyncio
+async def test_blocks_cgnat():
+    # 100.64.0.0/10 is CGNAT (RFC 6598) — not covered by Python's is_private
+    with pytest.raises(HTTPException) as exc:
+        await validate_url_safe("http://100.64.0.1/")
+    assert exc.value.status_code == 400
+
+
+@pytest.mark.asyncio
+async def test_blocks_cgnat_top():
+    with pytest.raises(HTTPException) as exc:
+        await validate_url_safe("http://100.127.255.255/")
+    assert exc.value.status_code == 400
+
+
+@pytest.mark.asyncio
 async def test_no_hostname_rejected():
     with pytest.raises(HTTPException) as exc:
         await validate_url_safe("http:///path")

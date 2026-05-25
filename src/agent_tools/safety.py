@@ -2,7 +2,10 @@
 
 Validates URLs and hostnames before making outbound HTTP/TCP connections.
 Blocks requests targeting private networks, loopback, cloud metadata
-(169.254.169.254, fd00:ec2::254), and other internal infrastructure.
+(169.254.169.254), CGNAT (100.64.0.0/10), and other internal infrastructure.
+
+Note on IPv6 ULA (fc00::/7): Python 3.11+ marks these is_private=True, so
+they are covered by the standard check. No explicit range needed.
 
 Known limitation: DNS resolve → validate → connect has a small TOCTOU window
 because httpx re-resolves on connect. A sophisticated attacker with TTL=0 DNS
@@ -19,6 +22,12 @@ from urllib.parse import urlparse
 
 from fastapi import HTTPException
 
+# Ranges not covered by Python's ipaddress is_private / is_reserved:
+# - 100.64.0.0/10  RFC 6598  Carrier-grade NAT (CGNAT) shared space
+_EXTRA_BLOCKED_V4 = [
+    ipaddress.ip_network("100.64.0.0/10"),   # CGNAT — RFC 6598
+]
+
 
 def _is_unsafe_ip(ip_str: str) -> bool:
     """Return True if the IP is in any blocked range."""
@@ -26,6 +35,11 @@ def _is_unsafe_ip(ip_str: str) -> bool:
         addr = ipaddress.ip_address(ip_str)
     except ValueError:
         return True  # unparseable → reject
+
+    if addr.version == 4:
+        for net in _EXTRA_BLOCKED_V4:
+            if addr in net:
+                return True
 
     return (
         addr.is_private
@@ -44,6 +58,7 @@ async def validate_url_safe(url: str) -> str:
     Raises HTTPException(400) if any resolved IP targets internal infrastructure.
 
     Returns the normalized URL (with https:// prepended if missing).
+    Note: bare hostnames (no scheme) are silently upgraded to https://.
     """
     if not url.startswith(("http://", "https://")):
         url = f"https://{url}"
