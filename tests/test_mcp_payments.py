@@ -35,6 +35,8 @@ def _mock_server():
     pr = MagicMock()
     pr.model_dump_json.return_value = '{"x402Version":2,"accepts":[]}'
     server.create_payment_required_response.return_value = pr
+    matching = MagicMock()
+    server.find_matching_requirements.return_value = matching
     verify = MagicMock()
     verify.is_valid = True
     server.verify_payment = AsyncMock(return_value=verify)
@@ -43,6 +45,13 @@ def _mock_server():
     server.settle_payment = AsyncMock(return_value=settle)
     return server
 
+
+
+
+@pytest.fixture(autouse=True)
+def set_pay_to(monkeypatch):
+    """Ensure AGENT_TOOLS_PAY_TO is set for all tests."""
+    monkeypatch.setenv("AGENT_TOOLS_PAY_TO", "0xDeadBeef0000000000000000000000000000dEaD")
 
 @pytest.mark.asyncio
 async def test_non_mcp_path_passthrough():
