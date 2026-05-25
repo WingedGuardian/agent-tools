@@ -7,6 +7,15 @@ Agents connect remotely and discover tools like qr_generate, dns_health.
 from __future__ import annotations
 
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
+
+# Disable DNS-rebinding protection: we sit behind Cloudflare TLS edge (which
+# validates Host), payment-gate every paid endpoint via x402, and CORS is
+# already managed by FastAPI's CORSMiddleware. The default protection only
+# matters for browser-mediated localhost attacks, which isn't our threat model.
+_TRANSPORT_SECURITY = TransportSecuritySettings(
+    enable_dns_rebinding_protection=False,
+)
 
 mcp = FastMCP(
     "Agent Tools",
@@ -15,6 +24,10 @@ mcp = FastMCP(
         "and more. Each tool returns structured JSON."
     ),
     stateless_http=True,
+    # Serve at the mount root so /mcp (when app.mount('/mcp', ...)) routes
+    # directly, instead of /mcp/mcp.
+    streamable_http_path="/",
+    transport_security=_TRANSPORT_SECURITY,
 )
 
 

@@ -74,6 +74,30 @@ async def health() -> dict:
     return {"status": "ok", "version": "0.1.0"}
 
 
+@app.get("/.well-known/glama.json")
+async def glama_manifest() -> dict:
+    """Glama auto-crawl manifest. Glama probes this path during MCP server discovery."""
+    return {
+        "$schema": "https://glama.ai/mcp/schemas/server.json",
+        "name": "agent-tools",
+        "description": (
+            "9 agent-native utility tools — DNS, WHOIS, email validation, "
+            "IP geolocation, URL health, HTTP headers analysis, QR codes, "
+            "text extraction, and tech stack detection. With x402 micropayments."
+        ),
+        "homepage": "https://tools.beethoven2024.com",
+        "repository": "https://github.com/WingedGuardian/agent-tools",
+        "license": "MIT",
+        "language": "python",
+        "categories": ["utility", "networking", "web", "security"],
+        "tags": ["x402", "micropayments", "agent-native", "USDC", "Base"],
+        "remote": {
+            "url": "https://tools.beethoven2024.com/mcp",
+            "transport": "streamable-http",
+        },
+    }
+
+
 @app.get("/.well-known/mcp/server-card.json")
 async def mcp_server_card() -> dict:
     """Static MCP server metadata — used by Smithery and other registries for discovery."""
