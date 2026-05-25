@@ -12,6 +12,8 @@ import re
 from fastapi import APIRouter, Query
 from pydantic import BaseModel
 
+from ..safety import validate_smtp_target_safe
+
 router = APIRouter(prefix="/v1/email", tags=["email"])
 
 # RFC 5322 simplified — catches most invalid formats
@@ -95,6 +97,7 @@ async def validate_email(
 
     # Optional SMTP probe
     if check_smtp and result["mx_records"]:
+        await validate_smtp_target_safe(result["mx_records"][0])
         result["smtp_reachable"] = await _probe_smtp(result["mx_records"][0], email)
 
     return EmailValidationResult(**result)

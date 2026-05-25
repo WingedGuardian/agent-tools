@@ -9,6 +9,8 @@ from __future__ import annotations
 from fastapi import APIRouter, Query
 from pydantic import BaseModel
 
+from ..safety import validate_url_safe
+
 router = APIRouter(prefix="/v1/headers", tags=["headers"])
 
 # Security headers to check
@@ -54,9 +56,8 @@ async def analyze_headers(
 
     result: dict = {"url": url}
 
-    if not url.startswith(("http://", "https://")):
-        url = f"https://{url}"
-        result["url"] = url
+    url = await validate_url_safe(url)
+    result["url"] = url
 
     try:
         async with httpx.AsyncClient(

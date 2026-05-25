@@ -9,6 +9,8 @@ from __future__ import annotations
 from fastapi import APIRouter, Query
 from pydantic import BaseModel
 
+from ..safety import validate_url_safe
+
 router = APIRouter(prefix="/v1/url", tags=["url"])
 
 
@@ -50,10 +52,8 @@ async def url_health(
 
     result: dict = {"url": url, "reachable": False}
 
-    # Basic URL validation
-    if not url.startswith(("http://", "https://")):
-        url = f"https://{url}"
-        result["url"] = url
+    url = await validate_url_safe(url)
+    result["url"] = url
 
     try:
         start = time.monotonic()

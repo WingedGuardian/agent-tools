@@ -9,6 +9,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .endpoints import dns, email, extract, headers, ip, qr, techdetect, url, whois
+from .limits import IPRateLimitMiddleware
 from .mcp_server import mcp
 from .payments import create_x402_middleware_args
 
@@ -34,6 +35,12 @@ app = FastAPI(
     redoc_url="/redoc",
     lifespan=lifespan,
 )
+
+# IP rate limiting — 60 req/min per IP for non-paying traffic.
+# Paying agents (X-PAYMENT header) are exempt: payment IS the rate limiter.
+# CORS allows all origins: agents don't have meaningful browser origins, and
+# x402 payment signatures prevent CSRF abuse of paid endpoints.
+app.add_middleware(IPRateLimitMiddleware)
 
 # CORS — allow all origins for agent access
 app.add_middleware(
