@@ -135,7 +135,8 @@ async def mcp_server_card() -> dict:
             "facilitator": "https://facilitator.xpay.sh",
             "description": (
                 "Per-call USDC micropayments via x402 protocol on Base mainnet. "
-                "Free endpoints: /health, /, /docs, /mcp handshake."
+                "MCP tools/call requires payment; initialize, tools/list, and ping pass through free. "
+                "REST /v1/* routes also require payment."
             ),
         },
         "tools": [

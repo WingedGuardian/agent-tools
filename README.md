@@ -44,7 +44,7 @@ curl "https://tools.beethoven2024.com/v1/dns/health?domain=example.com"
 | `extract_text` | `/v1/extract/text` | Clean text extraction from webpages (strips HTML, nav, ads) | $0.005 |
 | `tech_detect` | `/v1/tech/detect` | Website technology stack — frameworks, CMS, CDN, analytics | $0.005 |
 
-**Free:** `/health`, `/` (capabilities discovery), `/docs` (OpenAPI), `/mcp` (MCP handshake).
+**Free:** `/health`, `/`, `/docs` (OpenAPI), and MCP protocol methods `initialize` / `tools/list` / `ping`. All 9 tools require x402 payment via both MCP (`tools/call`) and REST (`/v1/*`).
 
 ## Why these endpoints
 
@@ -69,7 +69,7 @@ Every paid endpoint returns **HTTP 402 Payment Required** with the price spec wh
 
 Settlement happens on-chain on Base. Sub-2-second confirmation.
 
-Currently on Base Sepolia testnet — see [Configuration](#configuration) to enable mainnet.
+Runs on Base mainnet by default. Set `AGENT_TOOLS_TESTNET=true` to use Base Sepolia with the public testnet facilitator.
 
 ### Traditional billing
 
@@ -79,7 +79,7 @@ Coming soon: API key + Stripe usage billing for human developers and businesses.
 
 - Python 3.12 + FastAPI
 - MCP SDK (`mcp` v1.27) — streamable-http transport
-- x402 SDK (`x402[fastapi]` v2.9) — USDC micropayments on Base
+- x402 SDK (`x402[fastapi,evm]` >=v2.11) — USDC micropayments on Base
 - 8/9 endpoints self-hosted (no upstream API cost)
 - Single-process deploy, ~62MB memory footprint
 
